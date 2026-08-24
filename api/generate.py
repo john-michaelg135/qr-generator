@@ -8,7 +8,6 @@ import qrcode
 import qrcode.image.svg
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from mangum import Mangum
 from PIL import Image
 from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -282,6 +281,3 @@ async def generate_post(body: GenerateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
     return build_image_response(image_bytes, fmt)
-
-
-handler = Mangum(app)

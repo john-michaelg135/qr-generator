@@ -181,8 +181,15 @@
     fetch(url)
       .then(function (res) {
         if (!res.ok) {
-          return res.json().then(function (err) {
-            throw new Error(err.detail || "Generation failed");
+          return res.text().then(function (text) {
+            var detail = "Generation failed";
+            try {
+              var json = JSON.parse(text);
+              detail = json.detail || detail;
+            } catch (e) {
+              detail = text.substring(0, 100) || detail;
+            }
+            throw new Error(detail);
           });
         }
         return res.blob();
