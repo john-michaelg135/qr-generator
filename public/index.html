@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fast, free QR code generator. No ads, no accounts, no tracking.">
+  <title>QR Generator</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <header class="header">
+    <h1>QR Generator</h1>
+    <p class="subtitle">Encode anything. Instantly.</p>
+  </header>
+
+  <main class="container" role="main">
+    <form id="qr-form" novalidate>
+      <div class="form-group">
+        <label for="data-input">Data</label>
+        <input
+          type="text"
+          id="data-input"
+          name="data"
+          placeholder="https://example.com"
+          required
+          maxlength="4096"
+          autocomplete="off"
+          aria-describedby="data-error"
+        >
+        <span class="error-msg" id="data-error" role="alert"></span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="size-input">Size</label>
+          <input
+            type="number"
+            id="size-input"
+            name="size"
+            value="300"
+            min="100"
+            max="1000"
+            step="50"
+            aria-describedby="size-error"
+          >
+          <span class="error-msg" id="size-error" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="format-select">Format</label>
+          <select id="format-select" name="format">
+            <option value="png" selected>PNG</option>
+            <option value="svg">SVG</option>
+            <option value="jpeg">JPEG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ec-select">Error Correction</label>
+          <select id="ec-select" name="error_correction">
+            <option value="L">L — 7%</option>
+            <option value="M" selected>M — 15%</option>
+            <option value="Q">Q — 25%</option>
+            <option value="H">H — 30%</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="border-input">Border</label>
+          <input
+            type="number"
+            id="border-input"
+            name="border"
+            value="4"
+            min="0"
+            max="10"
+            aria-describedby="border-error"
+          >
+          <span class="error-msg" id="border-error" role="alert"></span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fill-color">Foreground</label>
+          <input type="color" id="fill-color" name="fill_color" value="#000000">
+        </div>
+
+        <div class="form-group">
+          <label for="back-color">Background</label>
+          <input type="color" id="back-color" name="back_color" value="#FFFFFF">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-generate">
+        Generate
+      </button>
+    </form>
+
+    <section class="preview" id="preview-area">
+      <div class="placeholder" id="placeholder">Awaiting input</div>
+    </section>
+
+    <div class="actions" id="actions" style="display:none;">
+      <button type="button" class="btn btn-primary" id="btn-download">Download</button>
+      <button type="button" class="btn" id="btn-copy-link">Copy Link</button>
+    </div>
+
+    <div class="direct-link" id="direct-link" style="display:none;" aria-label="Direct API link"></div>
+  </main>
+
+  <footer class="footer">Stateless. Serverless. Free.</footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>

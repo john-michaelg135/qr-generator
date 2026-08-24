@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Vercel
+.vercel/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Test artifacts
+test_qr.png
+*.log
+
+# Node (if vercel cli is used)
+node_modules/
