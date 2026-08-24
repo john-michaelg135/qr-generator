@@ -1,0 +1,16 @@
+{
+  "name": "QR Generator",
+  "short_name": "QR Gen",
+  "description": "Free, stateless QR code generator. No ads, no accounts, no tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060609",
+  "theme_color": "#33E1FF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
