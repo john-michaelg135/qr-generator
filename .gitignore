@@ -32,6 +32,9 @@ Desktop.ini
 .env.local
 .env.*.local
 
+# Editor config
+.kiro/
+
 # Test artifacts
 test_qr.png
 *.log
