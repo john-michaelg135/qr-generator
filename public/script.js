@@ -1,52 +1,55 @@
 /**
  * QR Code Generator — Frontend Logic
- * Handles form validation, preview generation, download, and link copying.
  */
 
 (function () {
   "use strict";
 
-  const form = document.getElementById("qr-form");
-  const dataInput = document.getElementById("data-input");
-  const sizeInput = document.getElementById("size-input");
-  const formatSelect = document.getElementById("format-select");
-  const ecSelect = document.getElementById("ec-select");
-  const borderInput = document.getElementById("border-input");
-  const fillColor = document.getElementById("fill-color");
-  const backColor = document.getElementById("back-color");
+  var form = document.getElementById("qr-form");
+  var dataInput = document.getElementById("data-input");
+  var sizeInput = document.getElementById("size-input");
+  var formatSelect = document.getElementById("format-select");
+  var ecSelect = document.getElementById("ec-select");
+  var borderInput = document.getElementById("border-input");
+  var fillColor = document.getElementById("fill-color");
+  var backColor = document.getElementById("back-color");
 
-  const previewArea = document.getElementById("preview-area");
-  const placeholder = document.getElementById("placeholder");
-  const actionsRow = document.getElementById("actions");
-  const directLinkEl = document.getElementById("direct-link");
-  const btnDownload = document.getElementById("btn-download");
-  const btnCopyLink = document.getElementById("btn-copy-link");
-  const toast = document.getElementById("toast");
+  var previewArea = document.getElementById("preview-area");
+  var placeholder = document.getElementById("placeholder");
+  var actionsRow = document.getElementById("actions");
+  var directLinkEl = document.getElementById("direct-link");
+  var btnDownload = document.getElementById("btn-download");
+  var btnCopyLink = document.getElementById("btn-copy-link");
+  var toast = document.getElementById("toast");
 
-  let currentUrl = null;
-  let currentBlob = null;
+  var infoFormat = document.getElementById("info-format");
+  var infoSize = document.getElementById("info-size");
+  var infoEc = document.getElementById("info-ec");
+
+  var currentBlob = null;
 
   // --- Validation ---
 
   function showError(id, msg) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (!el) return;
     el.textContent = msg;
     el.classList.add("visible");
   }
 
   function clearErrors() {
-    document.querySelectorAll(".error-msg").forEach(function (el) {
-      el.textContent = "";
-      el.classList.remove("visible");
-    });
+    var els = document.querySelectorAll(".error-msg");
+    for (var i = 0; i < els.length; i++) {
+      els[i].textContent = "";
+      els[i].classList.remove("visible");
+    }
   }
 
   function validate() {
     clearErrors();
-    let valid = true;
+    var valid = true;
 
-    const data = dataInput.value.trim();
+    var data = dataInput.value.trim();
     if (!data) {
       showError("data-error", "This field is required.");
       valid = false;
@@ -55,13 +58,13 @@
       valid = false;
     }
 
-    const size = parseInt(sizeInput.value, 10);
+    var size = parseInt(sizeInput.value, 10);
     if (isNaN(size) || size < 100 || size > 1000) {
       showError("size-error", "Must be between 100 and 1000.");
       valid = false;
     }
 
-    const border = parseInt(borderInput.value, 10);
+    var border = parseInt(borderInput.value, 10);
     if (isNaN(border) || border < 0 || border > 10) {
       showError("border-error", "Must be between 0 and 10.");
       valid = false;
@@ -73,7 +76,7 @@
   // --- URL Builder ---
 
   function buildApiUrl() {
-    const params = new URLSearchParams();
+    var params = new URLSearchParams();
     params.set("data", dataInput.value.trim());
     params.set("size", sizeInput.value);
     params.set("format", formatSelect.value);
@@ -88,30 +91,40 @@
     return window.location.origin + buildApiUrl();
   }
 
+  // --- Info bar update ---
+
+  function updateInfoBar() {
+    infoFormat.textContent = formatSelect.value.toUpperCase();
+    infoSize.textContent = sizeInput.value + " x " + sizeInput.value;
+    infoEc.textContent = "EC: " + ecSelect.value;
+  }
+
   // --- Preview ---
 
-  function showPreview(url) {
-    // Remove old preview image if any
-    const existingImg = previewArea.querySelector("img");
-    if (existingImg) existingImg.remove();
+  function showPreview(objectUrl) {
+    var existingImg = previewArea.querySelector("img");
+    if (existingImg) {
+      URL.revokeObjectURL(existingImg.src);
+      existingImg.remove();
+    }
 
     placeholder.style.display = "none";
 
-    const img = document.createElement("img");
-    img.src = url;
+    var img = document.createElement("img");
+    img.src = objectUrl;
     img.alt = "Generated QR code for: " + dataInput.value.trim();
-    img.width = 280;
-    img.height = 280;
     previewArea.insertBefore(img, previewArea.firstChild);
 
     actionsRow.style.display = "flex";
     directLinkEl.style.display = "block";
     directLinkEl.textContent = buildFullUrl();
+
+    updateInfoBar();
   }
 
   // --- Toast ---
 
-  let toastTimeout = null;
+  var toastTimeout = null;
 
   function showToast(msg) {
     toast.textContent = msg;
@@ -119,19 +132,17 @@
     if (toastTimeout) clearTimeout(toastTimeout);
     toastTimeout = setTimeout(function () {
       toast.classList.remove("show");
-    }, 1800);
+    }, 1600);
   }
 
-  // --- Event Handlers ---
+  // --- Events ---
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!validate()) return;
 
-    const url = buildApiUrl();
-    currentUrl = url;
+    var url = buildApiUrl();
 
-    // Fetch as blob for download capability
     fetch(url)
       .then(function (res) {
         if (!res.ok) {
@@ -143,8 +154,7 @@
       })
       .then(function (blob) {
         currentBlob = blob;
-        const objectUrl = URL.createObjectURL(blob);
-        showPreview(objectUrl);
+        showPreview(URL.createObjectURL(blob));
       })
       .catch(function (err) {
         showError("data-error", err.message);
@@ -154,11 +164,10 @@
   btnDownload.addEventListener("click", function () {
     if (!currentBlob) return;
 
-    const ext = formatSelect.value;
-    const filename = "qrcode." + ext;
-    const a = document.createElement("a");
+    var ext = formatSelect.value;
+    var a = document.createElement("a");
     a.href = URL.createObjectURL(currentBlob);
-    a.download = filename;
+    a.download = "qrcode." + ext;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -166,17 +175,21 @@
   });
 
   btnCopyLink.addEventListener("click", function () {
-    const fullUrl = buildFullUrl();
-    navigator.clipboard.writeText(fullUrl).then(function () {
-      showToast("Link copied");
-    }).catch(function () {
-      // Fallback: select the direct link text
-      const range = document.createRange();
+    var fullUrl = buildFullUrl();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullUrl).then(function () {
+        showToast("Link copied");
+      });
+    } else {
+      var range = document.createRange();
       range.selectNodeContents(directLinkEl);
-      const sel = window.getSelection();
+      var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
-      showToast("Select and copy manually");
-    });
+      showToast("Select and copy");
+    }
   });
+
+  // Initialize info bar
+  updateInfoBar();
 })();
