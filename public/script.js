@@ -108,15 +108,50 @@
       existingImg.remove();
     }
 
+    // Remove old effect elements
+    var oldEffects = previewArea.querySelectorAll(".hit-ring, .hit-ring-secondary, .hit-flash");
+    for (var i = 0; i < oldEffects.length; i++) {
+      oldEffects[i].remove();
+    }
+
     placeholder.style.display = "none";
 
+    // Spawn burst rings and flash
+    var ring1 = document.createElement("div");
+    ring1.className = "hit-ring";
+    previewArea.appendChild(ring1);
+
+    var ring2 = document.createElement("div");
+    ring2.className = "hit-ring-secondary";
+    previewArea.appendChild(ring2);
+
+    var flash = document.createElement("div");
+    flash.className = "hit-flash";
+    previewArea.appendChild(flash);
+
+    // Clean up effect elements after animation completes
+    setTimeout(function () {
+      ring1.remove();
+      ring2.remove();
+      flash.remove();
+    }, 700);
+
+    // Create image
     var img = document.createElement("img");
     img.src = objectUrl;
     img.alt = "Generated QR code for: " + dataInput.value.trim();
     previewArea.insertBefore(img, previewArea.firstChild);
 
+    // Re-trigger animations on actions and link
     actionsRow.style.display = "flex";
+    actionsRow.style.animation = "none";
+    actionsRow.offsetHeight;
+    actionsRow.style.animation = "";
+
     directLinkEl.style.display = "block";
+    directLinkEl.style.animation = "none";
+    directLinkEl.offsetHeight;
+    directLinkEl.style.animation = "";
     directLinkEl.textContent = buildFullUrl();
 
     updateInfoBar();
